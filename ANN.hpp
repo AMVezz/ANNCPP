@@ -85,17 +85,8 @@
                     current = current->frontPtrs[0];
                 }
 
-                bool output = true;
-                if (current->value > current->backPtrs[0]->frontPtrs[1]->value)
-                    output = false;
+                checkOutput(current, expectedValues);
 
-                bool expected = true;
-                if (expectedValues[0] > expectedValues[1])
-                    expected = false;
-
-                bool compare = output == expected;
-                cout << inputs[0]->value << " " << inputs[1]->value << " = " << output;
-                cout << " | " << compare << " | " << returnMSE(current->value, expectedValues[0]) << endl;
                 if (backPass == true)
                     BackPropagation(current, expectedValues);
             }
@@ -142,6 +133,22 @@
                     }
                     current = current->backPtrs[0];
                 }
+
+            }
+
+            void checkOutput(Node* firstOutput, vector<float> expectedValues) {
+
+                bool output = true;
+                if (firstOutput->value > firstOutput->backPtrs[0]->frontPtrs[1]->value)
+                    output = false;
+
+                bool expected = true;
+                if (expectedValues[0] > expectedValues[1])
+                    expected = false;
+
+                bool compare = output == expected;
+                cout << inputs[0]->value << " " << inputs[1]->value << " = " << output;
+                cout << " | " << compare << " | " << returnMSE(firstOutput->value, expectedValues[0]) << endl;
 
             }
 
