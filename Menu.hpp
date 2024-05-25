@@ -88,43 +88,57 @@
 //          printCurrentLogic()
 //          ==========================
             void printCurrentLogic(ANN &ann) {
+
+                vector<float> truthTable = ann.returnTruthTable();
+                
                 cout << "+-----------------------------+" << endl;
-                cout << "|   Logic Operator: ";          
+                cout << "|     Logic Operator: ";          
                 switch (userLogicSelection) {
                     case Buffer: 
-                        cout << "Buffer    |" << endl;
+                        cout << "Buffer  |" << endl;
                         break;
                     case NOT:
-                        cout << "NOT       |" << endl;
+                        cout << "NOT     |" << endl;
                         break;
                     case AND:
-                        cout << "AND       |" << endl;
+                        cout << "AND     |" << endl;
                         break;
                     case NAND:
-                        cout << "NAND      |" << endl;
+                        cout << "NAND    |" << endl;
                         break;
                     case OR:
-                        cout << "OR        |" << endl;
+                        cout << "OR      |" << endl;
                         break;
                     case NOR:
-                        cout << "NOR       |" << endl;
+                        cout << "NOR     |" << endl;
                         break;
                     case XOR:
-                        cout << "XOR       |" << endl;
+                        cout << "XOR     |" << endl;
                         break;
                     case XNOR:
-                        cout << "XNOR      |" << endl;
+                        cout << "XNOR    |" << endl;
                         break;
                     default:
-                        cout << "UNKNOWN   |" << endl;
+                        cout << "UNKNOWN |" << endl;
                         break;
                 }
-                cout << "|   Truth Table:    ";
-                for (auto bit : ann.returnTruthTable()) {
-                    cout << bit << " ";
-                }
-                cout << "  |" << endl;
                 cout << "+-----------------------------+" << endl;
+                cout << "|         Truth Table         |" << endl;
+                cout << "+-----------------------------+" << endl;
+                cout << "|                             |" << endl;
+                cout << "|             0  1            |" << endl;
+                cout << "|             ----            |" << endl;
+                cout << "|         0 | ";
+                for (int i = 0; i < 2; i++) {
+                    cout << truthTable[i] << "  ";
+                }
+                cout << "          |" << endl;
+                cout << "|         1 | ";
+                for (int i = 2; i < 4; i++) {
+                    cout << truthTable[i] << "  ";
+                }
+                cout << "          |" << endl;
+                cout << "|                             |" << endl;
             } // printCurrentLogic()
 //          ========================
 
@@ -166,6 +180,7 @@
                 int selection;
                 cout << "Enter selection for logic gate: ";
                 cin >> selection;
+                cout << endl;
 
                 switch (selection) {
                     case 1: userLogicSelection = Buffer;
@@ -234,7 +249,6 @@
 //          ===================
 
             void ProcessLogicCommand(ANN &ann) {
-                LogicDisplay();
                 vector<float> truthTable;
                 switch (userLogicSelection) {
                     case Buffer: 
