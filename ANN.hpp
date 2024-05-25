@@ -1,7 +1,10 @@
+    #pragma once
     #include <iostream>
     #include <vector>
     #include <cmath>
     #include <random>
+    #include <set>
+    #include <stack>
     using namespace std;
     
     class ANN {
@@ -17,8 +20,13 @@
 
         public:
 
+//      =======================
+//      Public member Functions
+//      =======================
+
             ANN(void) {
                 learningRate = 0.1;
+                truthTable = {0, 0, 0, 1};
             }
             ~ANN(void) {
                 destroy();
@@ -56,18 +64,12 @@
                 
             }
 
-            void ForwardPropogation(string backPass) {
+            void ForwardPropogation(bool backPass = false) {
 
                 inputs[0]->value = round(randomNum());
+                inputs[1]->value = round(randomNum());
 
-                vector<float> expectedValues;
-                if (inputs[0]->value == 1) {
-                    expectedValues.push_back(1);
-                    expectedValues.push_back(0);
-                } else {
-                    expectedValues.push_back(0);
-                    expectedValues.push_back(1);
-                }
+                vector<float> expectedValues = returnExpectedValues();
 
                 Node* current = inputs[0];
                 while (current->frontPtrs.size() > 0) {
@@ -82,8 +84,19 @@
                     }
                     current = current->frontPtrs[0];
                 }
-                cout << round(current->value) << " --> " << expectedValues[0] << "  " << expectedValues[1] << endl;
-                if (backPass == "backPass")
+
+                bool output = true;
+                if (current->value > current->backPtrs[0]->frontPtrs[1]->value)
+                    output = false;
+
+                bool expected = true;
+                if (expectedValues[0] > expectedValues[1])
+                    expected = false;
+
+                bool compare = output == expected;
+                cout << inputs[0]->value << " " << inputs[1]->value << " = " << output;
+                cout << " | " << compare << " | " << returnMSE(current->value, expectedValues[0]) << endl;
+                if (backPass == true)
                     BackPropagation(current, expectedValues);
             }
 
@@ -147,13 +160,34 @@
                 }
             }
 
-            void printMSE(float value, float expected) {
-                float error = 0.5 * pow(value - expected, 2);
-                cout << error << endl;
+            float returnMSE(float value, float expected) {
+                return 0.5 * pow(value - expected, 2);
             }
 
-            vector<float> ExpectedValues() {
+            vector<float> returnTruthTable() {
+                return truthTable;
+            }
 
+            void SetInputs(float bitOne, float bitTwo) {
+                inputs[0]->value = bitOne;
+                inputs[1]->value = bitTwo;
+            }
+
+            void setTruthTable(vector<float> truthTable) {
+                this->truthTable = truthTable;
+            }
+
+            vector<float> returnExpectedValues() {
+                int truthIndex = 0;
+                int expectedBit = 0;
+                for (int i = 0; i < inputs.size(); i++) {
+                    truthIndex += inputs[i]->value * (i + 1);
+                }
+                expectedBit = truthTable[truthIndex];
+                if (expectedBit == 0) {
+                    return {1, 0};
+                }
+                return {0, 1};
             }
 
             float randomNum() {
@@ -164,6 +198,10 @@
             }
 
         private:
+
+//      ========================
+//      Private Member Functinos
+//      ========================
 
             float activation(string function, float value) {
                 if (function == "sigmoid") {
@@ -177,23 +215,38 @@
             }
 
             void destroy() {
-                Node* current = inputs[0];
-                while (current->frontPtrs.size() > 0) {
-                    current = current->frontPtrs[0];
+                set<Node*> visited;  // To keep track of all visited nodes
+
+                // First collect all nodes in a set to avoid duplicates
+                stack<Node*> toVisit;
+                for (auto input : inputs) {
+                    toVisit.push(input);
                 }
-                while (current->backPtrs.size() > 0) {
-                    current = current->backPtrs[0];
-                    for (auto node : current->frontPtrs) {
-                        node = NULL;
-                        delete node;
+
+                while (!toVisit.empty()) {
+                    Node* current = toVisit.top();
+                    toVisit.pop();
+                    if (visited.find(current) == visited.end()) {  // Ensure each node is only visited once
+                        visited.insert(current);
+                        for (auto& front : current->frontPtrs) {
+                            toVisit.push(front);
+                        }
                     }
                 }
-                for (auto node : inputs) {
-                    node = NULL;
+
+                // Now delete all collected nodes
+                for (auto node : visited) {
                     delete node;
                 }
+
+                inputs.clear();  // Clear the inputs vector as it no longer holds valid pointers
             }
 
+//       ========================
+//       Private Member Variables
+//       ========================
+
+            vector<float> truthTable;
             vector<Node*> inputs;
             float learningRate;
 
