@@ -4,8 +4,6 @@
 
     using namespace std;
 
-    void imageProcessor(const string&);
-
     int main() {
 
         ANN ann;
