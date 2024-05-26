@@ -54,6 +54,7 @@
                         for (auto node : inputs[0]->frontPtrs[0]->frontPtrs) {
                             node->backPtrs.push_back(newNode);
                             node->weights.push_back(randomNum());
+                            newNode->frontPtrs.push_back(node);
                         }
                     }
                 } else {
@@ -70,10 +71,49 @@
                         for (auto node : current->frontPtrs[0]->frontPtrs[0]->frontPtrs) {
                             node->backPtrs.push_back(newNode);
                             node->weights.push_back(randomNum());
+                            newNode->frontPtrs.push_back(node);
                         }
                     }
                 }
                 
+            }
+
+            void deleteNode(int layer) {
+
+                if (layer == 1) {
+                    delete inputs[inputs.size() - 1];
+                    for (auto node : inputs[0]->frontPtrs) {
+                        node->backPtrs.pop_back();
+                        node->weights.pop_back();
+                    }
+                } else if (layer == 2) {
+                    delete inputs[0]->frontPtrs[inputs[0]->frontPtrs.size() - 1];
+                    for (auto node : inputs) {
+                        node->frontPtrs.pop_back();
+                    }
+                    if (inputs[0]->frontPtrs[0]->frontPtrs.size() > 0) {
+                        for (auto node : inputs[0]->frontPtrs[0]->frontPtrs) {
+                            node->backPtrs.pop_back();
+                            node->weights.pop_back();
+                        }
+                    }
+                } else {
+                    Node* current = inputs[0];
+                    for (int i = 0; i < layer - 3; i++) {
+                        current = current->frontPtrs[0];
+                    }
+                    delete current->frontPtrs[0]->frontPtrs[current->frontPtrs[0]->frontPtrs.size() - 1];
+                    for (auto node : current->frontPtrs) {
+                        node->frontPtrs.pop_back();
+                    }
+                    if (current->frontPtrs[0]->frontPtrs[0]->frontPtrs.size() > 0) {
+                        for (auto node : current->frontPtrs[0]->frontPtrs[0]->frontPtrs) {
+                            node->backPtrs.pop_back();
+                            node->weights.pop_back();
+                        }
+                    }
+                }
+
             }
 
             void ForwardPropogation(bool backPass = false) {
@@ -190,6 +230,7 @@
                     if (inputs.size() > i) {
                         current = inputs[i];
                         cout << round(current->value * 100)/100 << "  ";
+                        iterate = true;
                     } else if (iterate){
                         current = inputs[0];
                         cout << "   ";
