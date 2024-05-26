@@ -14,7 +14,7 @@
 //      ============
 //      Custom Types
 //      =============================================
-        enum MenuChoices  {Quit, Insert, Train, Test, SetLogic};
+        enum MenuChoices  {Quit, Insert, Train, Test, SetLogic, Print};
         enum LogicChoices {Buffer, NOT, AND, NAND, OR, NOR, XOR, XNOR};
 //      =============================================
 
@@ -64,7 +64,7 @@
                 cout << "+-----------------------------+" << endl;
                 cout << "| 1:  Quit        2:  Insert  |" << endl;
                 cout << "| 3:  Train       4:  Test    |" << endl;
-                cout << "| 5:  Set Logic               |" << endl;
+                cout << "| 5:  Set Logic   6:  Print   |" << endl;
                 cout << "+-----------------------------+" << endl;
             } // Display
 //          ============
@@ -164,6 +164,8 @@
                         break;
                     case 5: userMenuSelection = SetLogic;
                         break;
+                    case 6: userMenuSelection = Print;
+                        break;
                     default: userMenuSelection = Quit;
                         break;
                 }
@@ -239,6 +241,9 @@
                             int choice;
                             QueryUserLogic();
                             ProcessLogicCommand(ann);
+                            break;
+                        case Print:
+                            ann.printANN();
                             break;
                         default:
                             cout << "Invalid selection" << endl;
