@@ -50,12 +50,12 @@
                         newNode->backPtrs.push_back(node);
                         newNode->weights.push_back(randomNum());
                     }
-                    if (inputs[0]->frontPtrs[0]->frontPtrs.size() > 0) {
+                    /* if (inputs[0]->frontPtrs[0]->frontPtrs.size() > 0) {
                         for (auto node : inputs[0]->frontPtrs[0]->frontPtrs) {
                             node->backPtrs.push_back(newNode);
                             node->weights.push_back(randomNum());
                         }
-                    }
+                    } */
                 } else {
                     Node* current = inputs[0];
                     for (int i = 0; i < layer - 3; i++) {
@@ -66,12 +66,12 @@
                         newNode->backPtrs.push_back(node);
                         newNode->weights.push_back(randomNum());
                     }
-                    if (current->frontPtrs[0]->frontPtrs.size() > 0) {
+                    /* if (current->frontPtrs[0]->frontPtrs.size() > 0) {
                         for (auto node : current->frontPtrs[0]->frontPtrs) {
                             node->backPtrs.push_back(newNode);
                             node->weights.push_back(randomNum());
                         }
-                    }
+                    } */
                 }
                 
             }
