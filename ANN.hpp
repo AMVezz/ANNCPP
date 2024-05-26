@@ -50,12 +50,12 @@
                         newNode->backPtrs.push_back(node);
                         newNode->weights.push_back(randomNum());
                     }
-                    /* if (inputs[0]->frontPtrs[0]->frontPtrs.size() > 0) {
+                    if (inputs[0]->frontPtrs[0]->frontPtrs.size() > 0) {
                         for (auto node : inputs[0]->frontPtrs[0]->frontPtrs) {
                             node->backPtrs.push_back(newNode);
                             node->weights.push_back(randomNum());
                         }
-                    } */
+                    }
                 } else {
                     Node* current = inputs[0];
                     for (int i = 0; i < layer - 3; i++) {
@@ -66,12 +66,12 @@
                         newNode->backPtrs.push_back(node);
                         newNode->weights.push_back(randomNum());
                     }
-                    /* if (current->frontPtrs[0]->frontPtrs.size() > 0) {
-                        for (auto node : current->frontPtrs[0]->frontPtrs) {
+                    if (current->frontPtrs[0]->frontPtrs[0]->frontPtrs.size() > 0) {
+                        for (auto node : current->frontPtrs[0]->frontPtrs[0]->frontPtrs) {
                             node->backPtrs.push_back(newNode);
                             node->weights.push_back(randomNum());
                         }
-                    } */
+                    }
                 }
                 
             }
@@ -163,19 +163,37 @@
                 cout << " | " << compare << " | " << returnMSE(firstOutput->value, expectedValues[0]) << endl;
 
             }
-
+            
             void printANN() {
-                for (auto node : inputs) {
-                    cout << node->value << "   ";
-                }
-                cout << endl;
+                                
                 Node* current = inputs[0];
-                while (current->frontPtrs.size() > 0) {
-                    for (auto node : current->frontPtrs) {
-                        cout << node->value << "   ";
+                cout << current->value << "  ";
+
+                int i = 0;
+                bool iterate = true;
+                while (iterate) { 
+                    iterate = false;
+
+                    while (current->frontPtrs.size() > 0) {
+                        if (current->frontPtrs.size() > i) {
+                            current = current->frontPtrs[i];
+                            cout << round(current->value * 100)/100 << "  ";
+                            iterate = true;
+                        } else {
+                            current = current->frontPtrs[0];
+                            cout << "   ";
+                        }
                     }
                     cout << endl;
-                    current = current->frontPtrs[0];
+
+                    i++;
+                    if (inputs.size() > i) {
+                        current = inputs[i];
+                        cout << round(current->value * 100)/100 << "  ";
+                    } else if (iterate){
+                        current = inputs[0];
+                        cout << "   ";
+                    }   
                 }
             }
 
@@ -258,7 +276,7 @@
                     delete node;
                 }
 
-                inputs.clear();  // Clear the inputs vector as it no longer holds valid pointers
+                inputs.clear();  // Clear the inputs vector
             }
 
 //       ========================
