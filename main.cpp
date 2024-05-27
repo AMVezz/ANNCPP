@@ -12,16 +12,21 @@
         ann.insert(1, 0);
         ann.insert(1, 0);
 
-        ann.insert(2, 0);
-        ann.insert(2, 0);
-        ann.insert(2, 0);
+        for (int i = 0; i < 4; i++) {
+            ann.insert(1, 0.5);
+        }
+        for (int i = 0; i < 8; i++) {
+            ann.insert(2, 0.5);
+        }
+        for (int i = 0; i < 8; i++) {
+            ann.insert(3, 0.5);
+        }
+        for (int i = 0; i < 8; i++) {
+            ann.insert(4, 0.5);
+        }
 
-        ann.insert(3, 0);
-        ann.insert(3, 0);
-        ann.insert(3, 0);
-
-        ann.insert(4, 0);
-        ann.insert(4, 0);
+        ann.insert(5, 0);
+        ann.insert(5, 0);
         
         do {
             menu.QueryUser(ann);
