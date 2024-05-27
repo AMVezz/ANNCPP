@@ -26,12 +26,13 @@
 
             ANN(void) {
                 learningRate = 0.1;
-                truthTable = {0, 0, 0, 1};
+                truthTable = {0, 0, 0, 0};
+                trainingIterations = 0;
+                allGates = true;
             }
             ~ANN(void) {
                 destroy();
             }
-
 
             void insert(int layer, float value) {
 
@@ -121,6 +122,18 @@
                 inputs[0]->value = round(randomNum());
                 inputs[1]->value = round(randomNum());
 
+                if (allGates) {
+                    inputs[2]->value = round(randomNum());
+                    inputs[3]->value = round(randomNum());
+                    inputs[4]->value = round(randomNum());
+                    inputs[5]->value = round(randomNum());
+                    truthTable = {inputs[2]->value, inputs[3]->value, inputs[4]->value, inputs[5]->value};
+                } else {
+                    for (int i = 2; i < 6; i++) {
+                        inputs[i]->value = truthTable[i-2];
+                    }
+                }
+   
                 vector<float> expectedValues = returnExpectedValues();
 
                 Node* current = inputs[0];
@@ -137,13 +150,15 @@
                     current = current->frontPtrs[0];
                 }
 
-                checkOutput(current, expectedValues);
-
                 if (backPass == true)
                     BackPropagation(current, expectedValues);
+
+                checkOutput(current, expectedValues);
             }
 
             void BackPropagation(Node* firstOutput, vector<float> expectedValues) {
+
+                trainingIterations++;
 
                 Node* current = firstOutput->backPtrs[0];
                 Node* temp = current; // so I can go back to output nodes after error terms are found
@@ -199,8 +214,13 @@
                     expected = false;
 
                 bool compare = output == expected;
-                cout << inputs[0]->value << " " << inputs[1]->value << " = " << output;
-                cout << " | " << compare << " | " << returnMSE(firstOutput->value, expectedValues[0]) << endl;
+                for (auto bit : truthTable) {
+                    cout << bit << " ";
+                }
+                cout << "| " 
+                << inputs[1]->value << " " << inputs[0]->value << " = " << output
+                << " | " << compare << " | " << trainingIterations << " | " 
+                << returnMSE(firstOutput->value, expectedValues[0]) << endl;
 
             }
             
@@ -255,10 +275,14 @@
                 this->truthTable = truthTable;
             }
 
+            void setAllGates(bool choice) {
+                this->allGates = choice;
+            }
+            
             vector<float> returnExpectedValues() {
                 int truthIndex = 0;
                 int expectedBit = 0;
-                for (int i = 0; i < inputs.size(); i++) {
+                for (int i = 0; i < 2; i++) {
                     truthIndex += inputs[i]->value * (i + 1);
                 }
                 expectedBit = truthTable[truthIndex];
@@ -327,5 +351,6 @@
             vector<float> truthTable;
             vector<Node*> inputs;
             float learningRate;
-
+            double trainingIterations;
+            bool allGates;
         };
