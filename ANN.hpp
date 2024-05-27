@@ -174,7 +174,7 @@
 
                 // find hidden layer error terms
                 current = current->backPtrs[0];
-                while (current->backPtrs.size() > 1) {
+                do {
                     for (int i = 0; i < current->frontPtrs.size(); i++) {
                         Node* node = current->frontPtrs[i];
                         node->errorTerm = 0;
@@ -184,12 +184,13 @@
                         }
                         node->errorTerm *= (node->value * (1 - node->value));
                     }
-                    current = current->backPtrs[0];
-                }
+                    if (current->backPtrs.size() > 0)
+                        current = current->backPtrs[0];
+                } while (current->backPtrs.size() > 0);
 
                 // update weights and biases with gradients
                 current = temp;
-                while (current->backPtrs.size() > 0) {
+                do {
                     for (auto node : current->frontPtrs) {
                         for (int i = 0; i < node->backPtrs.size(); i++) {
                             weightGradient = node->errorTerm * node->backPtrs[i]->value;
@@ -198,8 +199,9 @@
                         biasGradient = node->errorTerm;
                         node->bias = node->bias - learningRate * biasGradient;
                     }
-                    current = current->backPtrs[0];
-                }
+                    if (current->backPtrs.size() > 0)
+                        current = current->backPtrs[0];
+                } while (current->backPtrs.size() > 0);
 
             }
 
